@@ -36,7 +36,8 @@ class MultiTapDetector(
 
     fun handleEvent(event: MotionEvent) {
         when (event.action) {
-            MotionEvent.ACTION_DOWN, MotionEvent.ACTION_POINTER_DOWN -> {
+            MotionEvent.ACTION_DOWN, MotionEvent.ACTION_POINTER_DOWN,
+            MotionEvent.ACTION_POINTER_1_DOWN, MotionEvent.ACTION_POINTER_2_DOWN, MotionEvent.ACTION_POINTER_3_DOWN -> {
                 downEvent.copyFrom(event)
 
                 if (event.eventTime - lastTapUpEvent.time > doubleTapTimeout) {
@@ -51,7 +52,8 @@ class MultiTapDetector(
                     downEvent.clear()
                 }
             }
-            MotionEvent.ACTION_UP, MotionEvent.ACTION_POINTER_UP -> {
+            MotionEvent.ACTION_UP, MotionEvent.ACTION_POINTER_UP,
+                    MotionEvent.ACTION_POINTER_1_UP, MotionEvent.ACTION_POINTER_2_UP, MotionEvent.ACTION_POINTER_3_UP -> {
                 val downEvent = this.downEvent
                 val lastTapUpEvent = this.lastTapUpEvent
 
