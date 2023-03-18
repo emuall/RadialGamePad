@@ -66,7 +66,8 @@ object TouchUtils {
     }
 
     private fun isCancelEvent(event: MotionEvent, pointerIndex: Int): Boolean {
-        val isUpAction = event.actionMasked in setOf(MotionEvent.ACTION_UP, MotionEvent.ACTION_POINTER_UP, MotionEvent.ACTION_CANCEL)
+        val isUpAction = event.actionMasked in setOf(MotionEvent.ACTION_UP, MotionEvent.ACTION_POINTER_UP, MotionEvent.ACTION_CANCEL,
+            MotionEvent.ACTION_POINTER_1_UP, MotionEvent.ACTION_POINTER_2_UP,MotionEvent.ACTION_POINTER_3_UP)
         val isRelatedToCurrentIndex = event.actionIndex == pointerIndex
         return isUpAction && isRelatedToCurrentIndex
     }

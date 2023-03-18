@@ -90,7 +90,7 @@ class RadialGamePad @JvmOverloads constructor(
     context: Context,
     attrs: AttributeSet? = null,
     defStyleAttr: Int = 0
-) : View(context, attrs, defStyleAttr), EventsSource {
+) : TouchTraceView(context, attrs, defStyleAttr), EventsSource {
 
     private val eventDispatcher = newSingleThreadContext("touch-events")
     private val hapticDispatcher = newSingleThreadContext("haptic-events")
@@ -598,6 +598,7 @@ class RadialGamePad @JvmOverloads constructor(
     }
 
     override fun onTouchEvent(event: MotionEvent): Boolean {
+        super.onTouchEvent(event)
         tapsDetector.handleEvent(event)
 
         val fingers = extractFingersPositions(event).toList()
