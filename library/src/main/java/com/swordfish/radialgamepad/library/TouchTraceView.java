@@ -41,6 +41,7 @@ public class TouchTraceView extends View
         mContext = context;
         pointMap = new HashMap<>();
         initPaint();
+        setBackgroundColor(Color.TRANSPARENT);
     }
 
     private void initPaint()

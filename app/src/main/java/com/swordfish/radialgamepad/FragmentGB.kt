@@ -30,7 +30,9 @@ import androidx.lifecycle.flowWithLifecycle
 import androidx.lifecycle.lifecycleScope
 import com.swordfish.radialgamepad.library.RadialGamePad
 import com.swordfish.radialgamepad.library.event.Event
+import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.merge
+import kotlinx.coroutines.flow.shareIn
 import kotlinx.coroutines.launch
 
 class FragmentGB : Fragment() {
@@ -63,6 +65,7 @@ class FragmentGB : Fragment() {
         lifecycleScope.launch {
             merge(leftPad.events(), rightPad.events())
                 .flowWithLifecycle(lifecycle, Lifecycle.State.RESUMED)
+                .shareIn(lifecycleScope, SharingStarted.Eagerly)
                 .collect {
                     handleEvent(it)
                 }
