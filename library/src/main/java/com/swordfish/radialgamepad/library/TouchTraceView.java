@@ -8,7 +8,6 @@ import android.graphics.PorterDuff;
 import android.graphics.PorterDuffXfermode;
 import android.util.AttributeSet;
 import android.util.DisplayMetrics;
-import android.util.Log;
 import android.view.Display;
 import android.view.MotionEvent;
 import android.view.View;
@@ -51,7 +50,7 @@ public class TouchTraceView extends View
         line_paint.setColor(paintColor);
         text_paint = new Paint();
         text_paint.setAntiAlias(true);
-        text_paint.setColor(Color.BLUE);
+        text_paint.setColor(Color.GREEN);
         text_paint.setTextSize(30);
         countPaint = new Paint();
         countPaint.setAntiAlias(true);
@@ -76,10 +75,10 @@ public class TouchTraceView extends View
             canvas.drawLine(point.x, 0, point.x, getHeight(), line_paint);
             if (num == 1)
             {
-                canvas.drawText(" (" + point.x + "," + point.y + ")", screenW / 2, screenH / 2, text_paint);
+                canvas.drawText(" (" + (int)point.x + "," + (int)point.y + ")", point.x, point.y, text_paint);
             } else
             {
-                canvas.drawText(String.valueOf(pointMap.size()), screenW / 2, screenH / 2, countPaint);
+                canvas.drawText(String.valueOf(pointMap.size()), point.x, point.y, countPaint);
             }
         }
     }
