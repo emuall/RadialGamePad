@@ -52,7 +52,7 @@ class MultiTapDetector(
                     downEvent.clear()
                 }
             }
-            MotionEvent.ACTION_UP, MotionEvent.ACTION_POINTER_UP,
+            MotionEvent.ACTION_UP, MotionEvent.ACTION_POINTER_UP,MotionEvent.ACTION_CANCEL,MotionEvent.ACTION_OUTSIDE,
                     MotionEvent.ACTION_POINTER_1_UP, MotionEvent.ACTION_POINTER_2_UP, MotionEvent.ACTION_POINTER_3_UP -> {
                 val downEvent = this.downEvent
                 val lastTapUpEvent = this.lastTapUpEvent
@@ -78,6 +78,9 @@ class MultiTapDetector(
                         callback(downEvent.x, downEvent.y, taps, taps == numberOfTaps)
                     }, doubleTapTimeout)
                 }
+            }
+            else -> {
+                println("")
             }
         }
     }

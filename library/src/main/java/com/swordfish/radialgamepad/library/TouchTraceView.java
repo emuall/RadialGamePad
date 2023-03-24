@@ -19,32 +19,30 @@ import java.util.HashMap;
 import java.util.Map;
 
 
-public class TouchTraceView extends View
-{
+public class TouchTraceView extends View {
     Context mContext;
     private Paint line_paint, text_paint, countPaint;
     int screenW, screenH;
     private int paintColor = Color.RED;
-    Map<Integer, TouchPoint> pointMap;
+    private Map<Integer, TouchPoint> pointMap;
     float back_x1, back_y1, back_x2, back_y2;
 
     public TouchTraceView(Context context, @Nullable AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
 
-        WindowManager manager=(WindowManager) context.getSystemService(Context.WINDOW_SERVICE);
-        DisplayMetrics displayMetrics=new DisplayMetrics();
-        Display display=manager.getDefaultDisplay();
+        WindowManager manager = (WindowManager) context.getSystemService(Context.WINDOW_SERVICE);
+        DisplayMetrics displayMetrics = new DisplayMetrics();
+        Display display = manager.getDefaultDisplay();
         display.getMetrics(displayMetrics);
-        this.screenW=displayMetrics.widthPixels;
-        this.screenH=displayMetrics.heightPixels;
+        this.screenW = displayMetrics.widthPixels;
+        this.screenH = displayMetrics.heightPixels;
         mContext = context;
         pointMap = new HashMap<>();
         initPaint();
         setBackgroundColor(Color.TRANSPARENT);
     }
 
-    private void initPaint()
-    {
+    private void initPaint() {
         line_paint = new Paint();
         line_paint.setAntiAlias(true);
         line_paint.setColor(paintColor);
@@ -54,62 +52,52 @@ public class TouchTraceView extends View
         text_paint.setTextSize(30);
         countPaint = new Paint();
         countPaint.setAntiAlias(true);
-        countPaint.setColor(Color.GREEN);
+        countPaint.setColor(Color.YELLOW);
         countPaint.setTextSize(60);
     }
 
     @Override
-    protected void onDraw(Canvas canvas)
-    {
+    protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
         int num = pointMap.size();
-        if (num == 0)
-        {
+        if (num == 0) {
             clearDraw(canvas);
             return;
         }
-        for (Map.Entry<Integer, TouchPoint> entry : pointMap.entrySet())
-        {
+        for (Map.Entry<Integer, TouchPoint> entry : pointMap.entrySet()) {
             TouchPoint point = entry.getValue();
             canvas.drawLine(0, point.y, getWidth(), point.y, line_paint);
             canvas.drawLine(point.x, 0, point.x, getHeight(), line_paint);
-            if (num == 1)
-            {
-                canvas.drawText(" (" + (int)point.x + "," + (int)point.y + ")", point.x, point.y, text_paint);
-            } else
-            {
-                canvas.drawText(String.valueOf(pointMap.size()), point.x, point.y, countPaint);
+//            if (num == 1)
+//            {
+            canvas.drawText(" (" + (int) point.x + "," + (int) point.y + ")", point.x, point.y, text_paint);
+//            } else
+            if (num > 1) {
+                canvas.drawText(String.valueOf(pointMap.size()), point.x + 20, point.y + 20, countPaint);
             }
         }
     }
 
 
     @Override
-    public boolean onTouchEvent(MotionEvent event)
-    {
+    public boolean onTouchEvent(MotionEvent event) {
         int index = event.getActionIndex();
         int id = event.getPointerId(index);
         int pointerIndex = event.findPointerIndex(id);
         int pointerCount = event.getPointerCount();
-        int historySize = event.getHistorySize();
-        switch (event.getActionMasked())
-        {
+        switch (event.getActionMasked()) {
             case MotionEvent.ACTION_POINTER_DOWN:
+            case MotionEvent.ACTION_POINTER_2_DOWN:
+            case MotionEvent.ACTION_POINTER_3_DOWN:
                 pointMap.put(pointerIndex, new TouchPoint(event.getX(pointerIndex), event.getY(pointerIndex)));
                 break;
             case MotionEvent.ACTION_POINTER_UP:
+            case MotionEvent.ACTION_POINTER_2_UP:
+            case MotionEvent.ACTION_POINTER_3_UP:
                 pointMap.remove(pointerIndex);
                 break;
             case MotionEvent.ACTION_MOVE:
-                for (int h = 0; h < historySize; h++)
-                {
-                    for (int p = 0; p < pointerCount; p++)
-                    {
-                        pointMap.put(p, new TouchPoint(event.getHistoricalX(p, h), event.getHistoricalY(p, h)));
-                    }
-                }
-                for (int p = 0; p < pointerCount; p++)
-                {
+                for (int p = 0; p < pointerCount; p++) {
                     pointMap.put(p, new TouchPoint(event.getX(p), event.getY(p)));
                 }
 
@@ -122,12 +110,14 @@ public class TouchTraceView extends View
             case MotionEvent.ACTION_UP:
                 back_x2 = event.getX();
                 back_y2 = event.getY();
-                if (Math.abs(back_x1 - back_x2) > screenW / 2 && Math.abs(back_y1 - back_y2) > screenH / 2)
-                {
+                if (Math.abs(back_x1 - back_x2) > screenW / 2 && Math.abs(back_y1 - back_y2) > screenH / 2) {
                     callOnClick();
                 }
                 pointMap.clear();
                 break;
+            case MotionEvent.ACTION_CANCEL:
+            case MotionEvent.ACTION_OUTSIDE:
+                pointMap.clear();
             default:
                 break;
         }
@@ -136,20 +126,17 @@ public class TouchTraceView extends View
         return true;
     }
 
-    class TouchPoint
-    {
+    class TouchPoint {
         public float x = 0;
         public float y = 0;
 
-        TouchPoint(float x, float y)
-        {
+        TouchPoint(float x, float y) {
             this.x = x;
             this.y = y;
         }
     }
 
-    void clearDraw(Canvas canvas)
-    {
+    void clearDraw(Canvas canvas) {
         Paint paint = new Paint();
         paint.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.CLEAR));
         canvas.drawPaint(paint);
