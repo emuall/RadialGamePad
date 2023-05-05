@@ -62,7 +62,6 @@ public class TouchTraceView extends View {
         int num = pointMap.size();
         if (num == 0) {
             clearDraw(canvas);
-            canvas.drawColor(Color.TRANSPARENT);
             return;
         }
         for (Map.Entry<Integer, TouchPoint> entry : pointMap.entrySet()) {
@@ -142,6 +141,6 @@ public class TouchTraceView extends View {
         paint.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.CLEAR));
         canvas.drawPaint(paint);
         paint.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.SRC));
-        canvas.drawColor(Color.WHITE);
+        canvas.drawColor(Color.TRANSPARENT);
     }
 }
