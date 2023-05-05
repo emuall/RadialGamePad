@@ -39,7 +39,7 @@ public class TouchTraceView extends View {
         mContext = context;
         pointMap = new HashMap<>();
         initPaint();
-        setBackgroundColor(Color.TRANSPARENT);
+
     }
 
     private void initPaint() {
@@ -62,6 +62,7 @@ public class TouchTraceView extends View {
         int num = pointMap.size();
         if (num == 0) {
             clearDraw(canvas);
+            canvas.drawColor(Color.TRANSPARENT);
             return;
         }
         for (Map.Entry<Integer, TouchPoint> entry : pointMap.entrySet()) {
