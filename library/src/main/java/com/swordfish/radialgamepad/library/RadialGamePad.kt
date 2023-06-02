@@ -598,6 +598,13 @@ class RadialGamePad @JvmOverloads constructor(
 
     override fun onTouchEvent(event: MotionEvent): Boolean {
         super.onTouchEvent(event)
+
+        if (event.action==MotionEvent.ACTION_DOWN) {
+            if (TouchUtils.pointerCount > 1 && (event.x < 0 || event.y < 0)) {
+                TouchUtils.samsungMultitouchWorkaround = true;
+            }
+        }
+
         tapsDetector.handleEvent(event)
 
         val fingers = extractFingersPositions(event).toList()
