@@ -18,10 +18,17 @@
 
 package com.swordfish.radialgamepad.library.utils
 
+import android.app.Activity
+import android.content.Context
+import android.graphics.Point
 import android.graphics.PointF
 import android.graphics.RectF
+import android.util.DisplayMetrics
 import android.view.MotionEvent
 import androidx.annotation.RequiresApi
+import androidx.appcompat.widget.ThemedSpinnerAdapter.Helper
+import java.security.AccessController.getContext
+
 
 object TouchUtils {
 
@@ -42,6 +49,23 @@ object TouchUtils {
     fun extractFingersPositions(event: MotionEvent): Sequence<FingerPosition> {
         return iteratePointerIndexes(event)
             .map { (id, index) -> FingerPosition(id, event.getX(index), event.getY(index)) }
+    }
+
+    fun extractSamsungFingersPositions(context: Context,pointerCount :Int,event: MotionEvent): Sequence<FingerPosition> {
+        return iteratePointerIndexes(event)
+            .map { (id, index) -> getSamsungFingerPosition(context,pointerCount,id, event.getX(index), event.getY(index)) }
+    }
+
+    private fun getSamsungFingerPosition(context: Context,pointerCount :Int,pointerId: Int,  x: Float,  y: Float):FingerPosition {
+        var xV = x
+        var yV = y
+        // bug is hard to detect here, instead rely on the detection by the other buttons (see #2915)
+        if (pointerCount > 1) {
+            val scale: Double = getTouchScale(context)
+            xV /= scale.toFloat()
+            yV /= scale.toFloat()
+        }
+        return FingerPosition(pointerId, xV, yV)
     }
 
     private fun iteratePointerIndexes(event: MotionEvent): Sequence<Pair<Int, Int>> {
@@ -70,5 +94,18 @@ object TouchUtils {
             MotionEvent.ACTION_POINTER_1_UP, MotionEvent.ACTION_POINTER_2_UP,MotionEvent.ACTION_POINTER_3_UP)
         val isRelatedToCurrentIndex = event.actionIndex == pointerIndex
         return isUpAction && isRelatedToCurrentIndex
+    }
+
+    fun getTouchScale(context: Context): Double {
+        // via https://github.com/F0RIS/SamsungMultitouchBugSample/blob/Fix1/app/src/main/java/com/jelly/blob/TouchView.java
+        val displayMetrics = DisplayMetrics()
+        val outSmallestSize = Point()
+        val outLargestSize = Point()
+        (context as Activity).windowManager.defaultDisplay.getMetrics(displayMetrics)
+        context.windowManager.defaultDisplay.getCurrentSizeRange(outSmallestSize, outLargestSize)
+        return (Math.max(
+            displayMetrics.widthPixels,
+            displayMetrics.heightPixels
+        ) / outLargestSize.x.toFloat()).toDouble()
     }
 }

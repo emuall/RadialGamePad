@@ -19,12 +19,16 @@
 package com.swordfish.radialgamepad
 
 import android.os.Bundle
+import android.view.MotionEvent
 import androidx.appcompat.app.AppCompatActivity
 import androidx.navigation.findNavController
 import androidx.navigation.ui.setupWithNavController
 import com.google.android.material.bottomnavigation.BottomNavigationView
 
 class MainActivity : AppCompatActivity() {
+
+    private var samsungMultitouchWorkaround = false
+    private var pointerCount = 0
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -34,5 +38,14 @@ class MainActivity : AppCompatActivity() {
         val navController = findNavController(R.id.nav_host_fragment)
 
         navView.setupWithNavController(navController)
+    }
+
+    override fun dispatchTouchEvent(event: MotionEvent): Boolean {
+
+        pointerCount = event.pointerCount
+        if (pointerCount > 1 && (event.x < 0 || event.y < 0)) {
+            samsungMultitouchWorkaround = true;
+        }
+        return super.dispatchTouchEvent(event)
     }
 }

@@ -35,5 +35,6 @@ data class RadialGamePadConfig(
     val secondaryDials: List<SecondaryDialConfig>,
     val haptic: HapticConfig = HapticConfig.PRESS,
     val theme: RadialGamePadTheme = RadialGamePadTheme(),
-    val preferScreenTouchCoordinates: Boolean = false
+    val preferScreenTouchCoordinates: Boolean = false,
+    val samsungTouchWorkaround: Boolean = false,
 )

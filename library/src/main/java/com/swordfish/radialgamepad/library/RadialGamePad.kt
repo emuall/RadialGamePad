@@ -29,7 +29,6 @@ import android.os.Build
 import android.os.Bundle
 import android.util.AttributeSet
 import android.view.MotionEvent
-import android.view.View
 import androidx.core.view.ViewCompat
 import androidx.core.view.accessibility.AccessibilityNodeInfoCompat
 import androidx.customview.widget.ExploreByTouchHelper
@@ -95,6 +94,12 @@ class RadialGamePad @JvmOverloads constructor(
     private val eventDispatcher = newSingleThreadContext("touch-events")
     private val hapticDispatcher = newSingleThreadContext("haptic-events")
     private val eventsSubject = MutableSharedFlow<Event>()
+
+    private var pointerCount = 0
+
+    fun setPointerCount(count:Int) {
+        pointerCount = count
+    }
 
     private val exploreByTouchHelper = object : ExploreByTouchHelper(this) {
 
@@ -640,9 +645,11 @@ class RadialGamePad @JvmOverloads constructor(
     }
 
     private fun extractFingersPositions(event: MotionEvent): Sequence<TouchUtils.FingerPosition> {
-        return if (gamePadConfig.preferScreenTouchCoordinates && Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-            getLocationOnScreen(positionOnScreen)
-            TouchUtils.extractRawFingersPositions(event, positionOnScreen[0], positionOnScreen[1])
+        return if (gamePadConfig.samsungTouchWorkaround && Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+//            getLocationOnScreen(positionOnScreen)
+//            TouchUtils.extractRawFingersPositions(event, positionOnScreen[0], positionOnScreen[1])
+
+            TouchUtils.extractSamsungFingersPositions(context,pointerCount,event)
         } else {
             TouchUtils.extractFingersPositions(event)
         }
