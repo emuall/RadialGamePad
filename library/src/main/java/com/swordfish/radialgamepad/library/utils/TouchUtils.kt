@@ -26,11 +26,12 @@ import android.graphics.RectF
 import android.util.DisplayMetrics
 import android.view.MotionEvent
 import androidx.annotation.RequiresApi
-import androidx.appcompat.widget.ThemedSpinnerAdapter.Helper
-import java.security.AccessController.getContext
 
 
 object TouchUtils {
+
+    var pointerCount = 0
+    var samsungMultitouchWorkaround = false
 
     data class FingerPosition(val pointerId: Int, val x: Float, val y: Float)
 

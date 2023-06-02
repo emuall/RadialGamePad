@@ -95,12 +95,6 @@ class RadialGamePad @JvmOverloads constructor(
     private val hapticDispatcher = newSingleThreadContext("haptic-events")
     private val eventsSubject = MutableSharedFlow<Event>()
 
-    private var pointerCount = 0
-
-    fun setPointerCount(count:Int) {
-        pointerCount = count
-    }
-
     private val exploreByTouchHelper = object : ExploreByTouchHelper(this) {
 
         private fun computeVirtualViews(): Map<Int, AccessibilityBox> {
@@ -645,11 +639,8 @@ class RadialGamePad @JvmOverloads constructor(
     }
 
     private fun extractFingersPositions(event: MotionEvent): Sequence<TouchUtils.FingerPosition> {
-        return if (gamePadConfig.samsungTouchWorkaround && Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-//            getLocationOnScreen(positionOnScreen)
-//            TouchUtils.extractRawFingersPositions(event, positionOnScreen[0], positionOnScreen[1])
-
-            TouchUtils.extractSamsungFingersPositions(context,pointerCount,event)
+        return if (TouchUtils.samsungMultitouchWorkaround && Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+            TouchUtils.extractSamsungFingersPositions(context,TouchUtils.pointerCount,event)
         } else {
             TouchUtils.extractFingersPositions(event)
         }
