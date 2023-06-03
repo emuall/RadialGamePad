@@ -29,6 +29,7 @@ import android.os.Build
 import android.os.Bundle
 import android.util.AttributeSet
 import android.view.MotionEvent
+import android.view.View
 import androidx.core.view.ViewCompat
 import androidx.core.view.accessibility.AccessibilityNodeInfoCompat
 import androidx.customview.widget.ExploreByTouchHelper
@@ -89,7 +90,7 @@ class RadialGamePad @JvmOverloads constructor(
     context: Context,
     attrs: AttributeSet? = null,
     defStyleAttr: Int = 0
-) : TouchTraceView(context, attrs, defStyleAttr), EventsSource {
+) : View(context, attrs, defStyleAttr), EventsSource {
 
     private val eventDispatcher = newSingleThreadContext("touch-events")
     private val hapticDispatcher = newSingleThreadContext("haptic-events")
@@ -597,7 +598,6 @@ class RadialGamePad @JvmOverloads constructor(
     }
 
     override fun onTouchEvent(event: MotionEvent): Boolean {
-        super.onTouchEvent(event)
 
         if (event.action==MotionEvent.ACTION_DOWN) {
             if (TouchUtils.pointerCount > 1 && (event.x < 0 || event.y < 0)) {
